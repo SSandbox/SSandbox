@@ -30,7 +30,7 @@ enum class Opcode : uint16
     SMSG_CONNECT_TO             = 0x304D,
     SMSG_ENUM_CHARACTERS_RESULT = 0x2584, // SL
 
-    SMSG_CREATE_CHAR            = 0x2744,
+    SMSG_CREATE_CHAR            = 0x2745, // SL
     SMSG_UPDATE_OBJECT          = 0x2816, // SL
     SMSG_AVAILABLE_HOTFIXES     = 0x25A3, // SL
     SMSG_UPDATE_TALENT_DATA     = 0x25ED, // SL
