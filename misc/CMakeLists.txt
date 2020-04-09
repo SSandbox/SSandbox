@@ -1,0 +1,12 @@
+file(GLOB_RECURSE FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.pem
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.conf
+    ${CMAKE_CURRENT_SOURCE_DIR}/id_rsa_connect_to
+)
+file(GLOB_RECURSE CSV_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.csv
+)
+if (MSVC)
+  install(FILES ${FILES} DESTINATION ${CMAKE_BINARY_DIR}/bin)
+  install(FILES ${CSV_FILES} DESTINATION ${CMAKE_BINARY_DIR}/bin/datastores)
+endif(MSVC)
