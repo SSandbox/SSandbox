@@ -93,6 +93,10 @@ public:
     void WriteEnumCharacter(Buffer& buffer, uint8 index) const;
     void WriteCreationBlock(Buffer& buffer) const;
 
+    void WriteUnitData(Buffer& buffer) const;
+    void WritePlayerData(Buffer& buffer) const;
+    void WriteActivePlayerData(Buffer& buffer) const;
+
     void SetCanFly(bool value);
 
     void SendMessage(std::string_view message);
