@@ -11,7 +11,7 @@
 
 ### Building
 - git clone https://github.com/SSandbox/SSandbox.git
-- mkdri buidl
+- mkdir build
 - cd build
 - cmake ..
 
