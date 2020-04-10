@@ -538,6 +538,10 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << uint32(0);                    // ArenaCooldowns
     buffer << int32(0);                     // Field_B0
     buffer << int32(0);                     // Field_B4
+
+    buffer << int32(0);                     // Field_F0_1
+    buffer << int32(0);                     // Field_F0_2
+
     buffer << ObjectGuid();                 // Field_F8 -- NEW
     buffer << int32(0);                     // Field_108
     buffer << int32(0);                     // Field_10B -- NEW
@@ -614,7 +618,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // ShieldBlock
     buffer << float(0);                     // ShieldBlockCritPercentage
     buffer << float(0);                     // Mastery
-    buffer << float(0);                     // Speed
+    buffer << float(5);                     // Speed
     buffer << float(0);                     // Avoidance
     buffer << float(0);                     // Sturdiness
     buffer << int32(0);                     // Versatility
@@ -624,7 +628,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
 
     for (std::size_t i = 0; i < 192; ++i)
     {
-        buffer << uint64(0xFFFFFFFFFFFFFFFF);   // ExploredZones
+        buffer << uint64(0);//std::numeric_limits<uint64>::max); // ExploredZones
     }
 
     for (std::size_t i = 0; i < 2; ++i)
@@ -655,6 +659,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << float(1);                     // ModResiliencePercent
     buffer << float(0);                     // OverrideSpellPowerByAPPercent
     buffer << float(0);                     // OverrideApBySpellPowerPercent
+
     buffer << int32(0);                     // ModTargetResistance
     buffer << int32(0);                     // ModTargetPhysicalResistance
     buffer << int32(0);                     // LocalFlags
@@ -700,7 +705,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << float(1);                     // UiSpellHitModifier
     buffer << int32(0);                     // HomeRealmTimeOffset
     buffer << float(0);                     // ModPetHaste
-    buffer << uint8(0);                     // LocalRegenFlags
+    buffer << int8(0);                      // LocalRegenFlags
     buffer << uint8(0);                     // AuraVision
     buffer << uint8(24);                    // NumBackpackSlots
     buffer << uint8(0);                     // NEW
@@ -726,13 +731,13 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
         buffer << uint64(0);                // QuestCompleted
     }
 
-    buffer << uint32(0);                    // Honor
-    buffer << uint32(0);                    // HonorNextLevel
-    buffer << uint32(0);                    // PvpRewardAchieved
-    buffer << uint32(0);                    // PvpTierMaxFromWins
-    buffer << uint32(0);                    // PvpLastWeeksRewardAchieved
-    buffer << uint32(0);                    // PvpLastWeeksTierMaxFromWins
-    buffer << uint32(0);                    // PvpLastWeeksRwardClaimed
+    buffer << int32(0);                     // Honor
+    buffer << int32(0);                     // HonorNextLevel
+    buffer << int32(0);                     // PvpRewardAchieved
+    buffer << int32(0);                     // PvpTierMaxFromWins
+    buffer << int32(0);                     // PvpLastWeeksRewardAchieved
+    buffer << int32(0);                     // PvpLastWeeksTierMaxFromWins
+    buffer << int32(0);                     // PvpLastWeeksRwardClaimed
     buffer << uint8(0);                     // NumBankSlots
 
     buffer << uint32(0);                    // ResearchSites.size()
