@@ -23,6 +23,11 @@
 Network::Acceptor::Acceptor(std::string_view ipv4, uint16 port, asio::io_context& ioContext) : _endpoint(asio::ip::address_v4::from_string(ipv4.data()), port), _acceptor(ioContext), _closing(false), _ioContext(ioContext)
 {
     _acceptor.open(_endpoint.protocol());
+    _acceptor.set_option(asio::socket_base::reuse_address(false));
+
+#ifdef WIN32
+    _acceptor.set_option(asio::detail::socket_option::boolean<BOOST_ASIO_OS_DEF(SOL_SOCKET), SO_EXCLUSIVEADDRUSE>(true));
+#endif
 }
 
 bool Network::Acceptor::BindAndRun()

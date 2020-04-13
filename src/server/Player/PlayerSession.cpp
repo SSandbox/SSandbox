@@ -211,6 +211,7 @@ void Session::SendUpdateObject()
 
     uint32 size = packet.GetWritePos() - wPos - 4;
     packet.WriteBytesAt_unsafe(wPos, &size, 1);
+    printf("%i\n", packet.GetWritePos());
     SendPacket(packet);
 }
 

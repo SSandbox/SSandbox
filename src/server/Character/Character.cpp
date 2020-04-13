@@ -302,7 +302,7 @@ void Character::WriteCreationBlock(Buffer& buffer) const
 
     uint32 wPos = buffer.GetWritePos();
     buffer << uint32(0);
-    buffer << uint8(1);
+    buffer << uint8(0xFF);
 
     buffer << int32(0);
     buffer << uint32(0);
@@ -359,8 +359,8 @@ void Character::WriteUnitData(Buffer& buffer) const
 
     for (std::size_t i = 0; i < 6; ++i)
     {
-        buffer << float(0.f);               // PowerRegenFlatModifier
-        buffer << float(0.f);               // PowerRegenInterruptedFlatModifier
+        buffer << float(1.f);               // PowerRegenFlatModifier
+        buffer << float(1.f);               // PowerRegenInterruptedFlatModifier
     }
 
     buffer << int64(1);                     // MaxHealth
@@ -464,7 +464,7 @@ void Character::WriteUnitData(Buffer& buffer) const
     buffer << int32(0);                     // OffhandWeaponAttackPower
     buffer << int32(0);                     // RangedWeaponAttackPower
     buffer << int32(0);                     // SetAttackSpeedAura
-    buffer << float(0);                     // Lifesteal
+    buffer << float(1);                     // Lifesteal
     buffer << float(0);                     // MinRangedDamage
     buffer << float(0);                     // MaxRangedDamage
     buffer << float(1);                     // ManaCostModiferModifier
@@ -483,7 +483,6 @@ void Character::WriteUnitData(Buffer& buffer) const
     buffer << int32(0);                     // LooksLikeMountId
     buffer << int32(0);                     // LooksLikeCreatureId
     buffer << int32(0);                     // ????? LookAtControllerId
-    //buffer << int32(0);                   // ????? TaxiNodesId
     buffer << ObjectGuid();                 // GuildGuid
     buffer << uint32(0);                    // PassiveSpells
     buffer << uint32(0);                    // WorldEffects
@@ -515,6 +514,21 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << uint32(0);                    // DuelTeam
     buffer << int32(0);                     // GuildTimeStamp
 
+    for (std::size_t i = 0; i < 125; ++i)
+    {
+        buffer << int32(0);                 // QuestID
+        buffer << uint32(0);                // StateFlags
+        buffer << uint32(0);                // EndTime
+        buffer << uint32(0);                // AcceptTime
+        buffer << uint32(0);                // Field_10
+        for (std::size_t j = 0; j < 24; ++j)
+        {
+            buffer << int16(0);             // ObjectiveProgress
+        }
+    }
+
+    buffer << uint32(0);
+
     for (std::size_t i = 0; i < 19; ++i)
     {
         buffer << uint32(_equipedItems[i]); // VisibleItem - ItemId
@@ -525,7 +539,7 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << int32(672);                   // Title
     buffer << int32(0);                     // FakeInebriation
     buffer << uint32(0);                    // VirtualPlayerRealm
-    buffer << uint32(0);                    // CurrentSpecId
+    buffer << uint32(262);                    // CurrentSpecId
     buffer << int32(0);                     // TaxiMountAnimKitId
 
     for (std::size_t i = 0; i < 4; ++i)
@@ -539,7 +553,7 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // Field_B0
     buffer << int32(0);                     // Field_B4
 
-    buffer << int32(0);                     // Field_F0_1
+    buffer << uint32(0);                    // Field_F0_1
     buffer << int32(0);                     // Field_F0_2
 
     buffer << ObjectGuid();                 // Field_F8 -- NEW
@@ -547,6 +561,7 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // Field_10B -- NEW
     buffer << int32(0);                     // Field_10F -- NEW
 
+    buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
     buffer.FlushBits();
 }
@@ -618,7 +633,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // ShieldBlock
     buffer << float(0);                     // ShieldBlockCritPercentage
     buffer << float(0);                     // Mastery
-    buffer << float(5);                     // Speed
+    buffer << float(0);                     // Speed
     buffer << float(0);                     // Avoidance
     buffer << float(0);                     // Sturdiness
     buffer << int32(0);                     // Versatility
@@ -628,7 +643,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
 
     for (std::size_t i = 0; i < 192; ++i)
     {
-        buffer << uint64(0);//std::numeric_limits<uint64>::max); // ExploredZones
+        buffer << uint64(std::numeric_limits<uint64>::max); // ExploredZones
     }
 
     for (std::size_t i = 0; i < 2; ++i)
@@ -707,9 +722,9 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << float(0);                     // ModPetHaste
     buffer << int8(0);                      // LocalRegenFlags
     buffer << uint8(0);                     // AuraVision
+    buffer << uint8(0);                     // NEW
+    buffer << uint8(0);                     // NEW
     buffer << uint8(24);                    // NumBackpackSlots
-    buffer << uint8(0);                     // NEW
-    buffer << uint8(0);                     // NEW
     buffer << int32(0);                     // OverrideSpellsId
     buffer << int32(0);                     // LfgBonusFactionId
     buffer << uint16(0);                    // LootSpecId
@@ -738,7 +753,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // PvpLastWeeksRewardAchieved
     buffer << int32(0);                     // PvpLastWeeksTierMaxFromWins
     buffer << int32(0);                     // PvpLastWeeksRwardClaimed
-    buffer << uint8(0);                     // NumBankSlots
+    buffer << uint8(5);                     // NumBankSlots
 
     buffer << uint32(0);                    // ResearchSites.size()
     buffer << uint32(0);                    // ResearchSiteProgress.size()
@@ -754,7 +769,8 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << uint32(0);                    // CharacterRestrictions.size()
     buffer << uint32(0);                    // SpellPctModByLabel.size()
     buffer << uint32(0);                    // SpellFlatModByLabel.size()
-    buffer << uint32(0);                    // ???????? The fuck is this
+    buffer << uint32(0);                    // Research.size()
+
     buffer << uint32(0);                    // SpellFlatModByLabel2.size()
     buffer << uint32(0);                    // ResearchSites.size()
     buffer << uint32(0);                    // ReplayedQuests.size()

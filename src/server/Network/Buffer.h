@@ -204,6 +204,12 @@ public:
         return *this;
     }
 
+    Buffer& operator<<(int8 u)
+    {
+        WriteBytes(&u, 1);
+        return *this;
+    }
+
     Buffer& operator<<(uint8 u)
     {
         WriteBytes(&u, 1);
@@ -211,6 +217,12 @@ public:
     }
 
     Buffer& operator<<(uint16 u)
+    {
+        WriteBytes(&u, 1);
+        return *this;
+    }
+
+    Buffer& operator<<(int16 u)
     {
         WriteBytes(&u, 1);
         return *this;

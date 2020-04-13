@@ -68,9 +68,9 @@ enum class Opcode : uint16
     CMSG_MOVE_HEARTBEAT         = 0x3A0E,
     CMSG_MOVE_STOP              = 0x39E6,
 
-    CMSG_LOGOUT                 = 0x34DE,
-    CMSG_SUSPEND_TOKEN_RESPONSE  = 0x376A,
-    CMSG_WORLD_PORT_RESPONSE    = 0x35F9,
+    CMSG_LOGOUT                 = 0x34E4, // SL
+    CMSG_SUSPEND_TOKEN_RESPONSE  = 0x376A, // SL
+    CMSG_WORLD_PORT_RESPONSE    = 0x35F9, // SL
 };
 
 namespace World
