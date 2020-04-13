@@ -464,7 +464,7 @@ void Character::WriteUnitData(Buffer& buffer) const
     buffer << int32(0);                     // OffhandWeaponAttackPower
     buffer << int32(0);                     // RangedWeaponAttackPower
     buffer << int32(0);                     // SetAttackSpeedAura
-    buffer << float(1);                     // Lifesteal
+    buffer << float(0);                     // Lifesteal
     buffer << float(0);                     // MinRangedDamage
     buffer << float(0);                     // MaxRangedDamage
     buffer << float(1);                     // ManaCostModiferModifier
@@ -539,7 +539,7 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << int32(672);                   // Title
     buffer << int32(0);                     // FakeInebriation
     buffer << uint32(0);                    // VirtualPlayerRealm
-    buffer << uint32(262);                    // CurrentSpecId
+    buffer << uint32(0);                    // CurrentSpecId
     buffer << int32(0);                     // TaxiMountAnimKitId
 
     for (std::size_t i = 0; i < 4; ++i)
