@@ -47,12 +47,15 @@ void Character::ReadCreationFromBuffer(Buffer const& buffer)
 {
     auto length = buffer.ReadBits<6>();
     auto hasTemplateSet = buffer.ReadBits<1>();
+    uint32 characterOptionsCount;
+
     buffer.ReadBits<1>(); // IsTrialBoost
-    buffer.ReadBits<1>(); // IsTrialBoost
+    buffer.ReadBits<1>(); // Unk901
 
     buffer >> _race;
     buffer >> _class;
     buffer >> _sex;
+    buffer >> characterOptionsCount;
     buffer >> _skin;
     buffer >> _face;
     buffer >> _hairStyle;
@@ -64,6 +67,10 @@ void Character::ReadCreationFromBuffer(Buffer const& buffer)
 
     if (hasTemplateSet)
         buffer.ReadSkip<uint32>();
+
+    _customizationOptions.resize(characterOptionsCount);
+    for (auto& option : _customizationOptions)
+        buffer >> option;
 }
 
 void Character::FinishCreatingCharacter()
@@ -85,6 +92,21 @@ void Character::FinishCreatingCharacter()
             }
         }
     }
+
+    if (!DataStores::ChrRaces[_race]->Alliance)
+    {
+        _knownSpells.emplace_back(668); // Common - Alliance
+        _skills[0].SkillLineID = 98;    // Common language
+    }
+    else
+    {
+        _knownSpells.emplace_back(669); // Orcish - Horde
+        _skills[0].SkillLineID = 109;   // Orcish language
+    }
+
+    _skills[0].SkillRank = 1;
+    _skills[0].SkillMaxRank = 1;
+    _skills[0].SkillStep = 1;
 }
 
 void Character::FinishLoggingIn()
@@ -105,10 +127,13 @@ void Character::FinishLoggingIn()
     _session->SendPacket(talentData);
 
     Packet knownSpells(Opcode::SMSG_SEND_KNOWN_SPELLS);
-    knownSpells.WriteBits<1>(true);
-    knownSpells << uint32(1);
+    knownSpells.WriteBits<1>(true); // IsLoading
+    knownSpells << uint32(_knownSpells.size());
     knownSpells << uint32(0);
-    knownSpells << uint32(668); // Common language
+
+    for (auto spellID : _knownSpells)
+        knownSpells << uint32(spellID);
+
     _session->SendPacket(knownSpells);
 
     Packet actionButtons(Opcode::SMSG_UPDATE_ACTION_BUTTONS);
@@ -183,6 +208,7 @@ void Character::WriteEnumCharacter(Buffer& buffer, uint8 index) const
     buffer << uint8(_race);
     buffer << uint8(_class);
     buffer << uint8(_sex);
+    buffer << uint32(_customizationOptions.size());
     buffer << uint8(_skin);
     buffer << uint8(_face);
     buffer << uint8(_hairStyle);
@@ -204,12 +230,15 @@ void Character::WriteEnumCharacter(Buffer& buffer, uint8 index) const
     buffer << uint32(0);    // Professions
     buffer << uint32(0);    // Professions
 
-    for (int i = 0; i < 23; ++i)
+    for (auto equipedItemID : _equipedItems)
     {
-        buffer << uint32(0);
-        buffer << uint32(0);
-        buffer << uint8(0);
-        buffer << uint8(0);
+        auto itemModifiedAppearance =  DataStores::GetItemModifiedAppearanceByItemID(equipedItemID);
+        auto itemEntry = DataStores::Item[equipedItemID];
+
+        buffer << uint32(itemModifiedAppearance ? DataStores::ItemAppearence[itemModifiedAppearance->ItemAppearanceID]->ItemDisplayInfoID : 0);
+        buffer << uint32(0);    // Enchant
+        buffer << uint8(itemEntry ? itemEntry->InventoryType : 0);
+        buffer << uint8(itemEntry ? itemEntry->SubClassID : 0);
     }
 
     buffer << uint32(0);
@@ -219,6 +248,10 @@ void Character::WriteEnumCharacter(Buffer& buffer, uint8 index) const
     buffer << uint32(0);
     buffer << uint32(0);
     buffer << uint32(0);
+
+    for (auto const& options : _customizationOptions)
+        buffer << options;
+
     buffer.WriteBits<6>(_name.length());
     buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
@@ -500,6 +533,7 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << uint32(0);                    // GuildRankId
     buffer << uint32(0);                    // GuildDeleteDate
     buffer << int32(0);                     // GuildLevel
+    buffer << uint32(_customizationOptions.size());
     buffer << uint8(_skin);                 // Skin
     buffer << uint8(_face);                 // Face
     buffer << uint8(_hairStyle);            // HairStyle
@@ -531,9 +565,10 @@ void Character::WritePlayerData(Buffer& buffer) const
 
     for (std::size_t i = 0; i < 19; ++i)
     {
-        buffer << uint32(_equipedItems[i]); // VisibleItem - ItemId
-        buffer << uint16(0);                // VisibleItem - ItemAppearanceModId
-        buffer << uint16(0);                // VisibleItem - ItemVisual
+        auto itemModfiedAppearanceEntry = DataStores::GetItemModifiedAppearanceByItemID(_equipedItems[i]);
+        buffer << uint32(_equipedItems[i]);                                                                                             // VisibleItem - ItemId
+        buffer << uint16(_equipedItems[i] ? itemModfiedAppearanceEntry->ItemAppearanceModifierID : 0);                                  // VisibleItem - ItemAppearanceModId
+        buffer << uint16(_equipedItems[i] ? DataStores::GetItemModifiedAppearanceByItemID(_equipedItems[i])->ItemAppearanceID : 0 );    // VisibleItem - ItemVisual
     }
 
     buffer << int32(672);                   // Title
@@ -561,6 +596,9 @@ void Character::WritePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // Field_10B -- NEW
     buffer << int32(0);                     // Field_10F -- NEW
 
+    for (auto const& options : _customizationOptions)
+        buffer << options;
+
     buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
     buffer.FlushBits();
@@ -580,24 +618,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
     buffer << int32(0);                     // NextLevelXP
     buffer << int32(0);                     // TrialXP
 
-    struct SkillInfo
-    {
-        uint16 SkillLineID;
-        uint16 SkillStep;
-        uint16 SkillRank;
-        uint16 SkillStartingRank;
-        uint16 SkillMaxRank;
-        int16 SkillTempBonus;
-        uint16 SkillPermBonus;
-    };
-
-    std::array<SkillInfo, 256> skills{};
-    skills[0].SkillLineID = 98;           // Common language
-    skills[0].SkillRank = 1;
-    skills[0].SkillMaxRank = 1;
-    skills[0].SkillStep = 1;
-
-    for (auto const& skill : skills)
+    for (auto const& skill : _skills)
     {
         buffer << uint16(skill.SkillLineID);
         buffer << uint16(skill.SkillStep);
@@ -805,8 +826,8 @@ void Character::SendMessage(std::string_view message)
     packet << ObjectGuid();
     packet << ObjectGuid();
     packet << ObjectGuid();
-    packet << uint32(33619968);
-    packet << uint32(33619968);
+    packet << uint32(33619968); // VirtualRealmID
+    packet << uint32(33619968); // VirtualRealmID
     packet << ObjectGuid();
     packet << uint32(0);
     packet << float(0.f);
@@ -847,8 +868,7 @@ float Character::GetOrientation() const
 
 uint32 Character::GetNativeDisplayID() const
 {
-    auto row = DataStores::ChrRaces[_race];
-    return !_sex ? row->MaleDisplayID : row->FemaleDisplayID;
+    return DataStores::GetDisplayIDForRace(_race, _sex);
 }
 
 EquipmentSlot Character::GetEquipmentSlotForItem(uint32 itemID) const
@@ -904,6 +924,20 @@ EquipmentSlot Character::GetEquipmentSlotForItem(uint32 itemID) const
     default:
         return EquipmentSlot::None;
     }
+}
+
+Buffer& operator<<(Buffer& lhs, Character::CustomizationOption const& rhs)
+{
+    lhs << rhs.OptionID;
+    lhs << rhs.Value;
+    return lhs;
+}
+
+Buffer const& operator>>(Buffer const& lhs, Character::CustomizationOption& rhs)
+{
+    lhs >> rhs.OptionID;
+    lhs >> rhs.Value;
+    return lhs;
 }
 } // Game
 

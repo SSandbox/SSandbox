@@ -85,7 +85,7 @@ public:
 
         for (auto name : Names)
         {
-            for (std::size_t i = 0; i < lines.size(); ++i)
+            for (std::size_t i = 0; i < names.size(); ++i)
             {
                 if (name == names[i])
                 {

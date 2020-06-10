@@ -20,57 +20,60 @@
 
 enum class Opcode : uint16
 {
-    MIN_OPCODE                  = 0x2000,
-    MAX_OPCODE                  = 0x3FFF,
+    MIN_OPCODE                      = 0x2000,
+    MAX_OPCODE                      = 0x3FFF,
 
-    SMSG_AUTH_RESPONSE          = 0x256D, // SL
-    SMSG_AUTH_CHALLENGE         = 0x3048, // SL
-    SMSG_ENABLE_ENCRYPTION      = 0x3049, // SL
-    SMSG_RESUME_COMMS           = 0x304B,
-    SMSG_CONNECT_TO             = 0x304D,
-    SMSG_ENUM_CHARACTERS_RESULT = 0x2584, // SL
+    SMSG_AUTH_RESPONSE              = 0x256D, // SL
+    SMSG_AUTH_CHALLENGE             = 0x3048, // SL
+    SMSG_ENABLE_ENCRYPTION          = 0x3049, // SL
+    SMSG_RESUME_COMMS               = 0x304B, // SL
+    SMSG_CONNECT_TO                 = 0x304D, // SL
+    SMSG_FEATURE_STATUS_GLUE_SCREEN = 0x25D5, // SL
+    SMSG_ENUM_CHARACTERS_RESULT     = 0x2584, // SL
 
-    SMSG_CREATE_CHAR            = 0x2745, // SL
-    SMSG_UPDATE_OBJECT          = 0x2816, // SL
-    SMSG_AVAILABLE_HOTFIXES     = 0x25A3, // SL
-    SMSG_UPDATE_TALENT_DATA     = 0x25ED, // SL
-    SMSG_UPDATE_ACTION_BUTTONS  = 0x25F7, // SL
-    SMSG_TUTORIAL_FLAGS         = 0x2807, // SL
-    SMSG_ACCOUNT_DATA_TIMES     = 0x2750, // SL
-    SMSG_LOGOUT_COMPLETE        = 0x26B5, // SL
+    SMSG_CREATE_CHAR                = 0x2747, // SL
+    SMSG_DELETE_CHAR                = 0x2748, // SL
+    SMSG_UPDATE_OBJECT              = 0x2819, // SL
+    SMSG_AVAILABLE_HOTFIXES         = 0x25A4, // SL
+    SMSG_UPDATE_TALENT_DATA         = 0x25EF, // SL
+    SMSG_UPDATE_ACTION_BUTTONS      = 0x25F7, // SL
+    SMSG_TUTORIAL_FLAGS             = 0x280A, // SL
+    SMSG_ACCOUNT_DATA_TIMES         = 0x2752, // SL
+    SMSG_LOGOUT_COMPLETE            = 0x26B7, // SL
 
-    SMSG_QUERY_PLAYER_NAME_RESPONSE = 0x270A, // SL
-    SMSG_MOVE_TELEPORT          = 0x2DD2,
-    SMSG_TRANSFER_PENDING       = 0x25E6,
-    SMSG_SUSPEND_TOKEN          = 0x25BE,
-    SMSG_RESUME_TOKEN           = 0x25BF,
+    SMSG_QUERY_PLAYER_NAME_RESPONSE = 0x270C, // SL
+    SMSG_MOVE_TELEPORT              = 0x2DD2, // SL
+    SMSG_TRANSFER_PENDING           = 0x25E6, // SL
+    SMSG_SUSPEND_TOKEN              = 0x25BE, // SL
+    SMSG_RESUME_TOKEN               = 0x25BF, // SL
 
-    SMSG_CHAT                   = 0x2BAD, // SL
-    SMSG_SEND_KNOWN_SPELLS      = 0x2C2A, // SL
-    SMSG_NEW_WORLD              = 0x25AD,
+    SMSG_CHAT                       = 0x2BAD, // SL
+    SMSG_SEND_KNOWN_SPELLS          = 0x2C2A, // SL
+    SMSG_NEW_WORLD                  = 0x25AE, // SL
 
-    SMSG_MOVE_SET_CAN_FLY       = 0x2DD3,
-    SMSG_MOVE_UNSET_CAN_FLY     = 0x2DD4,
+    SMSG_MOVE_SET_CAN_FLY           = 0x2DD3, // SL
+    SMSG_MOVE_UNSET_CAN_FLY         = 0x2DD4, // SL
 
-    CMSG_AUTH_CONTINUED_SESSION = 0x3766,
-    CMSG_AUTH_SESSION           = 0x3765,
-    CMSG_ENABLE_ENCRYPTION_ACK  = 0x3767,
-    CMSG_PING                   = 0x3768,
-    CMSG_LOG_DISCONNECT         = 0x3769,
-    CMSG_ENUM_CHARACTERS        = 0x35E8,
-    CMSG_PLAYER_LOGIN           = 0x35EA,
+    CMSG_AUTH_CONTINUED_SESSION     = 0x3766, // SL
+    CMSG_AUTH_SESSION               = 0x3765, // SL
+    CMSG_ENABLE_ENCRYPTION_ACK      = 0x3767, // SL
+    CMSG_PING                       = 0x3768, // SL
+    CMSG_LOG_DISCONNECT             = 0x3769, // SL
+    CMSG_ENUM_CHARACTERS            = 0x35E8, // SL
+    CMSG_PLAYER_LOGIN               = 0x35EA, // SL
 
-    CMSG_CREATE_CHARACTER       = 0x3644,
-    CMSG_QUERY_PLAYER_NAME      = 0x3689, // SL
+    CMSG_CREATE_CHARACTER           = 0x3644, // SL
+    CMSG_DELETE_CHARACTER           = 0x369E, // SL
+    CMSG_QUERY_PLAYER_NAME          = 0x368A, // SL
 
-    CMSG_CHAT_MESSAGE_SAY       = 0x37E7,
+    CMSG_CHAT_MESSAGE_SAY           = 0x37E7, // SL
 
-    CMSG_MOVE_HEARTBEAT         = 0x3A0E,
-    CMSG_MOVE_STOP              = 0x39E6,
+    CMSG_MOVE_HEARTBEAT             = 0x3A0F, // SL
+    CMSG_MOVE_STOP                  = 0x39E6, // SL
 
-    CMSG_LOGOUT                 = 0x34E4, // SL
-    CMSG_SUSPEND_TOKEN_RESPONSE  = 0x376A, // SL
-    CMSG_WORLD_PORT_RESPONSE    = 0x35F9, // SL
+    CMSG_LOGOUT                     = 0x34E4, // SL
+    CMSG_SUSPEND_TOKEN_RESPONSE     = 0x376A, // SL
+    CMSG_WORLD_PORT_RESPONSE        = 0x35F9, // SL
 };
 
 namespace World

@@ -68,7 +68,7 @@ public:
                 AsyncRead();
             }
         }
-        else
+        else if (error.value() != boost::asio::error::shut_down && error.value() != boost::asio::error::operation_aborted)
             Close();
     }
 
@@ -140,10 +140,11 @@ public:
             else if (_delayedClose)
                 Close();
         }
-        else
+        else if (error.value() != boost::asio::error::shut_down && error.value() != boost::asio::error::operation_aborted)
             Close();
 
     }
+
     void FinishSendingAndClose()
     {
         if (_sending.exchange(true) || _delayedClose)

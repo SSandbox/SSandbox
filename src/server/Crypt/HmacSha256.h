@@ -33,6 +33,7 @@ public:
         _context = HMAC_CTX_new();
         HMAC_Init(_context, reinterpret_cast<uint8 const*>(key), length, EVP_sha256());
     }
+
     ~HmacSha256()
     {
         HMAC_CTX_free(_context);

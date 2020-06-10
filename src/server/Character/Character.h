@@ -17,6 +17,8 @@
  */
 
 #pragma once
+#include "Object.h"
+
 namespace Game
 {
 
@@ -74,12 +76,21 @@ enum InventoryType : uint8
     Thrown          = 25,
 };
 
-
-class Character
+class Character : public Object
 {
     friend class Player::Session;
 
 public:
+
+    struct CustomizationOption
+    {
+        uint32 OptionID;
+        uint32 Value;
+
+        friend Buffer& operator<<(Buffer& lhs, Character::CustomizationOption const& rhs);
+        friend Buffer const& operator>>(Buffer const& lhs, Character::CustomizationOption& rhs);
+    };
+
     Character();
     void SetActiveSession(Player::Session* session);
     void Logout();
@@ -90,7 +101,7 @@ public:
 
     void Teleport(uint16 mapID, Position pos);
 
-    void WriteEnumCharacter(Buffer& buffer, uint8 index) const;
+    virtual void WriteEnumCharacter(Buffer& buffer, uint8 index) const final;
     void WriteCreationBlock(Buffer& buffer) const;
 
     void WriteUnitData(Buffer& buffer) const;
@@ -110,7 +121,20 @@ public:
     uint32 GetNativeDisplayID() const;
 
     EquipmentSlot GetEquipmentSlotForItem(uint32 itemID) const;
+
 private:
+
+    struct SkillInfo
+    {
+        uint16 SkillLineID;
+        uint16 SkillStep;
+        uint16 SkillRank;
+        uint16 SkillStartingRank;
+        uint16 SkillMaxRank;
+        int16 SkillTempBonus;
+        uint16 SkillPermBonus;
+    };
+
     ObjectGuid _guid;
 
     uint8 _race;
@@ -123,18 +147,21 @@ private:
     uint8 _facialHairStyle;
     uint8 _outfitID;
     std::array<uint8, 3> _customDisplayData;
+    std::vector<CustomizationOption> _customizationOptions;
 
     uint8 _level;
     uint16 _mapID;
     Position _position;
     float _orientation;
-
     float _flightSpeed;
 
     std::string _name;
 
-    Player::Session* _session;
+    std::array<uint32, 23> _equipedItems;
+    std::array<SkillInfo, 256> _skills;
+    std::vector<uint32> _knownSpells;
 
-    std::array<uint32, 24> _equipedItems;
+    Player::Session* _session;
 };
+
 } // Game

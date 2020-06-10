@@ -30,7 +30,7 @@ extern RSA ConnectToRSA;
 class RSA
 {
 public:
-    bool Load(const char* path)
+    bool LoadRSAKey(const char* path)
     {
         if (!fs::exists(path))
             return false;
@@ -49,11 +49,6 @@ public:
         }
 
         return true;
-    }
-
-    static bool LoadRSAKey(char const* path)
-    {
-        return Crypt::ConnectToRSA.Load(path);
     }
 
     ~RSA()

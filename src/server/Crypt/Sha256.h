@@ -41,6 +41,11 @@ public:
         SHA256_Update(&_context, data, length);
     }
 
+    void UpdateData(std::string_view data)
+    {
+        UpdateData(data.data(), data.length());
+    }
+
     void Finalize()
     {
         SHA256_Final(_digest.data(), &_context);

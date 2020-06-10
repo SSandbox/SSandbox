@@ -70,7 +70,7 @@ void ServerMgr::Run()
         return;
     }
 
-    if (!Crypt::RSA::LoadRSAKey("id_rsa_connect_to"))
+    if (!Crypt::ConnectToRSA.LoadRSAKey("id_rsa_connect_to"))
     {
         Log::Log(LogSeverity::Error, "Error: Failed to load rsa key file id_rsa_connect_to");
         return;

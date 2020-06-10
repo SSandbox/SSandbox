@@ -41,9 +41,6 @@ inline void Random(char(& bytes)[count])
     return Random(bytes, count);
 }
 
-template <typename T>
-T Random();
-
 std::string Bytes2HexString(char const* bytes, std::size_t count);
 
 template <std::size_t count>
@@ -66,12 +63,24 @@ T Random()
 }
 
 template <typename T>
+ std::underlying_type_t<T> ToUnderlying(T e)
+{
+    return static_cast< std::underlying_type_t<T>>(e);
+}
+
+template <typename T, typename T2, typename = std::enable_if_t<std::is_integral_v<T2>>>
+T ToEnum(T2 e)
+{
+    return static_cast<T>(e);
+}
+
+template <typename T>
 class EnumFlags
 {
 public:
     using BaseType = std::underlying_type_t<T>;
 
-    EnumFlags(T flags) : _flags(static_cast<BaseType(flags))
+    EnumFlags(T flags) : _flags(ToUnderlying(flags))
     {
     }
 
@@ -81,24 +90,12 @@ public:
 
     bool HasFlag(T flag)
     {
-        return (_flags & stati_cast<BaseType>(flag)) != 0;
+        return (_flags & ToUnderlying(flag)) != 0;
     }
 
 private:
     BaseType _flags;
 };
-
-template <typename T, typename Underlying = std::underlying_type_t<T>>
-Underlying ToUnderlying(T e)
-{
-    return static_cast<Underlying>(e);
-}
-
-template <typename T, typename T2, typename = std::enable_if_t<std::is_integral_v<T2>>>
-T ToEnum(T2 e)
-{
-    return static_cast<T>(e);
-}
 
 template <typename T>
 bool StrToInt(std::string_view str, T& value)

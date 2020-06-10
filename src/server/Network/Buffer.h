@@ -124,11 +124,7 @@ public:
 
             if (currentRemainingBits)
             {
-                _bitVal |= (value & ((1 << bitsToWrite) - 1)) << (8 - _bitPos - bitsToWrite);
-
-                if constexpr (bits != 1)
-                    value >>= bitsToWrite;
-
+                _bitVal |= (((static_cast<int>(value) >> (remaining - bitsToWrite)) & ((1 << bitsToWrite) - 1))) << ((8 - _bitPos) - bitsToWrite);
                 _bitPos += bitsToWrite;
                 remaining -= bitsToWrite;
             }

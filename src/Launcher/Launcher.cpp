@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (C) 2020 SSandbox project (sovak007@gmail.com)
+ * Copyright (C) 2020 SSandbox project (https://github.com/SSandbox)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

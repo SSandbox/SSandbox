@@ -34,6 +34,12 @@ namespace World
 namespace Player
 {
 
+    enum class ResponseCodes : uint8
+    {
+        CreationSucess  = 24,
+        DeletionSuccess = 52,
+    };
+
 class Session
 {
     friend class Game::Character;
@@ -47,6 +53,7 @@ public:
     void HandleNever(Packet const& packet);
     void HandleEnumCharacters(Packet const& packet);
     void HandleCreateCharacter(Packet const& packet);
+    void HandleDeleteCharacter(Packet const& packet);
     void HandlePlayerLogin(Packet const& packet);
     void HandleQueryPlayerName(Packet const& packet);
     void HandleChat(Packet const& packet);

@@ -349,7 +349,7 @@ private:
 
                         bgs::protocol::connection::v1::DisconnectNotification dc;
                         dc.set_error_code(request.error_code());
-                        //SendRPC(serviceHash, 4, dc);
+                        SendRPC(serviceHash, 4, dc);
                         FinishSendingAndClose();
 
                         break;

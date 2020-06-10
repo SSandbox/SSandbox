@@ -148,9 +148,9 @@ public:
 
                     if (length != "")
                     {
-                        auto intLength = std::atoi(length);
+                        std::size_t intLength;
 
-                        if (intLength > 128 * 1024 * 1024)
+                        if (!Utils::StrToInt(length, intLength) || intLength > 128 * 1024 * 1024)
                         {
                             Close();
                             return;

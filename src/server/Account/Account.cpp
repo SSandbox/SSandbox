@@ -103,6 +103,16 @@ std::shared_ptr<Game::Character> Instance::CreateCharacter()
     return character;
 }
 
+bool Instance::DeleteCharacter(uint64 ID)
+{
+    auto iter = _characterList.find(ID);
+    if (iter == _characterList.end())
+        return false;
+
+    _characterList.erase(iter);
+    return true;
+}
+
 Instance::CharacterList const& Instance::GetCharacterList()
 {
     return _characterList;

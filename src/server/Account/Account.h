@@ -39,6 +39,7 @@ public:
 
     std::shared_ptr<Game::Character> GetCharacterByID(uint64 ID);
     std::shared_ptr<Game::Character> CreateCharacter();
+    bool DeleteCharacter(uint64 ID);
     CharacterList const& GetCharacterList();
 
 private:

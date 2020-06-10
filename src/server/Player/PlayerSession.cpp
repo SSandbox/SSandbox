@@ -52,10 +52,24 @@ void Session::HandleEnumCharacters(Packet const& packet)
     available.WriteBytes(l_Buff, sizeof(l_Buff));
     SendPacket(available);
 
-    Packet response(Opcode::SMSG_ENUM_CHARACTERS_RESULT);
+    Packet featureGlueScreen(Opcode::SMSG_FEATURE_STATUS_GLUE_SCREEN);
+    featureGlueScreen.WriteBits<18>(0); // All false
+    featureGlueScreen.FlushBits();
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint64(0);
+    featureGlueScreen << uint32(150);   // Max amount of characters
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint32(0);
+    featureGlueScreen << uint32(Globals::Expansion);
+    featureGlueScreen << uint32(Globals::Expansion);
+    SendPacket(featureGlueScreen);
 
     auto const& raceInfo = World::Connection::RaceClassInfo::Instance();
 
+    Packet response(Opcode::SMSG_ENUM_CHARACTERS_RESULT);
     response.WriteBits<1>(1);
     response.WriteBits<1>(0);
     response.WriteBits<1>(1);
@@ -84,8 +98,19 @@ void Session::HandleCreateCharacter(Packet const& packet)
     character->FinishCreatingCharacter();
 
     Packet response(Opcode::SMSG_CREATE_CHAR, 1 + 16);
-    response << uint8(24);   // OK
+    response << uint8(ResponseCodes::CreationSucess);
     response << character->GetGUID();
+    SendPacket(response);
+}
+
+void Session::HandleDeleteCharacter(Packet const& packet)
+{
+    Game::ObjectGuid guid;
+    packet >> guid;
+
+    _accountInfo->DeleteCharacter(guid.GetLoPart());
+    Packet response(Opcode::SMSG_DELETE_CHAR, 1);
+    response << uint8(ResponseCodes::DeletionSuccess);
     SendPacket(response);
 }
 
@@ -216,7 +241,7 @@ void Session::SendUpdateObject()
 
 void Session::SendPacket(Packet& packet)
 {
-    _connections[static_cast<int>(GetConnectionIndexForPacket(packet.GetOpcode()))]->SendPacket(packet);
+    _connections[Utils::ToUnderlying(GetConnectionIndexForPacket(packet.GetOpcode()))]->SendPacket(packet);
 }
 
 void Session::DispatchPacket(Packet const& packet)
