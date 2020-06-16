@@ -101,7 +101,7 @@ public:
 
     void Teleport(uint16 mapID, Position pos);
 
-    virtual void WriteEnumCharacter(Buffer& buffer, uint8 index) const final;
+    void WriteEnumCharacter(Buffer& buffer, uint8 index) const;
     void WriteCreationBlock(Buffer& buffer) const;
 
     void WriteUnitData(Buffer& buffer) const;

@@ -625,11 +625,8 @@ public:
 
 private:
     bool _initialized;
-    char corruptionTest[256] = {0};
     Network::SocketBuffer _header;
-    char corruptionTest2[256] = {0};
     Packet _packet;
-    char corruptionTest3[256] = {0};
 
     std::size_t _sentPacketCounter;
     std::size_t _receivedPacketCounter;
