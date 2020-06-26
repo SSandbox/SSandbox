@@ -25,7 +25,7 @@ namespace Game
 
 std::atomic<uint64> gIDCounter = 0;
 
-Character::Character() : _guid(ObjectGuid::HighGuid::Player, gIDCounter++), _position(-2325, -5124, 6570), _session(nullptr), _flightSpeed(1.f)
+Character::Character() : Object({ ObjectGuid::HighGuid::Player, gIDCounter++}, ObjectType::Player), _position(-2325, -5124, 6570), _session(nullptr), _flightSpeed(1.f)
 {
     std::fill(_equipedItems.begin(), _equipedItems.end(), 0);
 }
@@ -145,7 +145,7 @@ void Character::FinishLoggingIn()
     _session->SendPacket(actionButtons);
 
     Packet accountDataTimes(Opcode::SMSG_ACCOUNT_DATA_TIMES);
-    accountDataTimes << _guid;
+    accountDataTimes << GetGUID();
     accountDataTimes << uint32(time(nullptr));
 
     for (int i = 0; i < 8; ++i)
@@ -187,7 +187,7 @@ void Character::Teleport(uint16 mapID, Position pos)
         _position = pos;
 
         Packet moveTeleport(Opcode::SMSG_MOVE_TELEPORT);
-        moveTeleport << _guid;
+        moveTeleport << GetGUID();
         moveTeleport << uint32(0);  // SeqIdx
         moveTeleport << pos;
         moveTeleport << float(_orientation);
@@ -202,7 +202,7 @@ void Character::Teleport(uint16 mapID, Position pos)
 
 void Character::WriteEnumCharacter(Buffer& buffer, uint8 index) const
 {
-    buffer << _guid;
+    buffer << GetGUID();
     buffer << uint64(0);    // GuidClubMember
     buffer << uint8(index);
     buffer << uint8(_race);
@@ -261,13 +261,8 @@ void Character::WriteEnumCharacter(Buffer& buffer, uint8 index) const
     buffer.WriteString(_name);
 }
 
-void Character::WriteCreationBlock(Buffer& buffer) const
+void Character::WriteMovementCreateBlock(Buffer& buffer) const
 {
-    buffer << uint8(2);
-    buffer << GetGUID();
-    buffer << uint8(7);
-
-    // Start of movement block
     buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
@@ -328,25 +323,14 @@ void Character::WriteCreationBlock(Buffer& buffer) const
     buffer.WriteBits<1>(0);
     buffer.WriteBits<1>(0);
     buffer.FlushBits();
+}
 
-    // End of Movement block
-
-    // Start of Values block
-
-    uint32 wPos = buffer.GetWritePos();
-    buffer << uint32(0);
-    buffer << uint8(0xFF);
-
-    buffer << int32(0);
-    buffer << uint32(0);
-    buffer << float(1.f);
-
+void Character::WriteUpdateFieldsCreateBlock(Buffer& buffer) const
+{
+    Object::WriteUpdateFieldsCreateBlock(buffer);
     WriteUnitData(buffer);
     WritePlayerData(buffer);
     WriteActivePlayerData(buffer);
-
-    uint32 size = buffer.GetWritePos() - wPos - 4;
-    buffer.WriteBytesAt_unsafe(wPos, &size, 1);
 }
 
 void Character::WriteUnitData(Buffer& buffer) const
@@ -808,7 +792,7 @@ void Character::WriteActivePlayerData(Buffer& buffer) const
 void Character::SetCanFly(bool value)
 {
     Packet packet(value ? Opcode::SMSG_MOVE_SET_CAN_FLY : Opcode::SMSG_MOVE_UNSET_CAN_FLY);
-    packet << _guid;
+    packet << GetGUID();
     packet << uint32(0);    // SeqIdx
     _session->SendPacket(packet);
 }
@@ -844,11 +828,6 @@ void Character::SendMessage(std::string_view message)
 
     packet.WriteString(message);
     _session->SendPacket(packet);
-}
-
-ObjectGuid Character::GetGUID() const
-{
-    return _guid;
 }
 
 uint16 Character::GetMapID() const

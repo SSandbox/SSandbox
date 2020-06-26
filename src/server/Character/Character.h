@@ -102,7 +102,9 @@ public:
     void Teleport(uint16 mapID, Position pos);
 
     void WriteEnumCharacter(Buffer& buffer, uint8 index) const;
-    void WriteCreationBlock(Buffer& buffer) const;
+
+    void WriteMovementCreateBlock(Buffer& buffer) const final;
+    void WriteUpdateFieldsCreateBlock(Buffer& buffer) const final;
 
     void WriteUnitData(Buffer& buffer) const;
     void WritePlayerData(Buffer& buffer) const;
@@ -111,8 +113,6 @@ public:
     void SetCanFly(bool value);
 
     void SendMessage(std::string_view message);
-
-    ObjectGuid GetGUID() const;
 
     uint16 GetMapID() const;
     Position GetPosition() const;
@@ -134,8 +134,6 @@ private:
         int16 SkillTempBonus;
         uint16 SkillPermBonus;
     };
-
-    ObjectGuid _guid;
 
     uint8 _race;
     uint8 _class;
